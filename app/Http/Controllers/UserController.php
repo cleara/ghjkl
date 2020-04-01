@@ -13,7 +13,7 @@ class UserController extends Controller
 {
     
     public function index(){
-		try{
+	{
         $data["count"] = User::count();
         $user = array();
 
@@ -29,19 +29,12 @@ class UserController extends Controller
 
             array_push($user, $item);
         }
-        $data["user"] = $user;
+        $data["user"] 	= $user;
         $data["status"] = 1;
 		return response($data);
-		
-	}catch(\Exception $e){
-		return response()->json([
-		  'status' => '0',
-		  'message' => $e->getMessage()
-		]);
-	  }
 	}
+}
 
-   
     public function getAll($limit = 10, $offset = 0){
         $data["count"] = User::count();
         $user = array();
@@ -57,7 +50,7 @@ class UserController extends Controller
             ];
             array_push($user, $item);
         }
-        $data["user"] = $user;
+        $data["user"] 	= $user;
         $data["status"] = 1;
         return response($data);
     }
@@ -72,7 +65,7 @@ class UserController extends Controller
 				return response()->json([
 						'logged' 	=>  false,
 						'message' 	=> 'Invalid email and password'
-					]);
+				]);
 			}
 		} catch(JWTException $e){
 			return response()->json([
@@ -87,7 +80,6 @@ class UserController extends Controller
 		]);
     }
 
-
     // register
     public function register(Request $request)
     {
@@ -97,7 +89,6 @@ class UserController extends Controller
 			'email'           => 'required|string|email|max:255|unique:users',
             'password'        => 'required_with:password_verify|same:password_verify|string|min:5',
             'password_verify' => 'required|string|min:5',
-        
 		]);
 
 		if($validator->fails()){
@@ -123,8 +114,7 @@ class UserController extends Controller
 		], 201);
 	}
 
-
-    public function LoginCheck(){
+	public function LoginCheck(){
 		try {
 			if(!$user = JWTAuth::parseToken()->authenticate()){
 				return response()->json([
@@ -155,9 +145,42 @@ class UserController extends Controller
 		 ], 201);
     }
     
+//delete
+	public function delete($id)
+    {
+        try{
+        	$delete = User::where("id", $id);
+        	if($delete->first()->role != 'admin'){
+        		$delete->delete();
 
+        		if($delete){
+	            	return response([
+		            	"status"	=> 1,
+		                "message"   => "Data berhasil dihapus."
+		            ]);
+	            } else {
+	            	return response([
+		            	"status"	=> 0,
+		                "message"   => "Data gagal dihapus."
+		            ]);
+	            }
 
-    public function logout(Request $request)
+        	} else {
+        		return response([
+	            	"status"	=> 0,
+	                "message"   => "User admin tidak boleh dihapus."
+	            ]);
+        	}
+        } catch(\Exception $e){
+            return response([
+            	"status"	=> 0,
+                "message"   => $e->getMessage()
+            ]);
+        }
+	}
+	 
+//logout
+	public function logout(Request $request)
     {
 
         if(JWTAuth::invalidate(JWTAuth::getToken())) {
@@ -171,11 +194,7 @@ class UserController extends Controller
                 "message"   => 'Logout gagal'
             ], 201);
         }
-
-        
-
+       
     }
-
-
 
 }

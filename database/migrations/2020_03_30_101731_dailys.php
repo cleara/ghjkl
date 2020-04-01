@@ -13,7 +13,7 @@ class Dailyscrum extends Migration
      */
     public function up()
     {
-        Schema::create('dailyscrum', function (Blueprint $table) {
+        Schema::create('daily', function (Blueprint $table) {
             $table->id();
             $table->integer('id_user');
             $table->enum('team', array('DDS','Beon','DOT','Node1','Node2','React1','React2','Laravel','Laravel_Vue','android'));
@@ -32,6 +32,6 @@ class Dailyscrum extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('dailyscrum');
+        Schema::dropIfExists('daily');
     }
 }

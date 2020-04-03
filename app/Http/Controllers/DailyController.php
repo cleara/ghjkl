@@ -20,12 +20,14 @@ class DailyController extends Controller
 	        $dataDailyScrum = DB::table('daily')->join('users','users.id','=','daily.id_user')
 											   ->select('daily.id', 
 														'users.firstname', 
-														'users.lastname', 
+														'users.lastname',
+														'users.email', 
 														'daily.team', 
 														'daily.activity_yesterday', 
 														'daily.activity_today', 
 														'daily.problem_yesterday', 
-														'daily.solution')
+														'daily.solution',
+														'daily.created_at')
                                                ->where('daily.id_user','=', $id)
 	                                           ->get();
 
@@ -38,7 +40,8 @@ class DailyController extends Controller
 	                "activity_yesterday"  	=> $p->activity_yesterday,
 	                "activity_today"  		=> $p->activity_today,
 	                "problem_yesterday"  	=> $p->problem_yesterday,
-	                "solution" 				=> $p->solution
+					"solution" 				=> $p->solution,
+					"created_at"             =>$p->created_at,
 	            ];
 
 	            array_push($daily, $item);
